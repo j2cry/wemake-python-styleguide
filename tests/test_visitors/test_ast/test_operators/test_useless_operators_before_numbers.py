@@ -50,13 +50,15 @@ usages = (
         '---5',
         '~~5',
         '~~~5',
+        '~~-5',
+        '~---5',
         '(not not 5)',
         '(not not None)',
         '(not not not True)',
         '(not not False)',
     ],
 )
-def test_plus_sign_before_numbers(
+def test_useless_unary_operator(
     assert_errors,
     parse_ast_tree,
     code,
@@ -64,7 +66,7 @@ def test_plus_sign_before_numbers(
     default_options,
     mode,
 ):
-    """Testing that there is no useless plus sign before a number."""
+    """Testing that one of the unary operators before a number is useless."""
     tree = parse_ast_tree(mode(code.format(number)))
 
     visitor = UselessOperatorsVisitor(default_options, tree=tree)
@@ -84,11 +86,13 @@ def test_plus_sign_before_numbers(
         '5',
         '-5',
         '~5',
+        '~-~5',
+        '-~-5',
         '(not 5)',
         '(not True)',
     ],
 )
-def test_plus_sign_before_numbers_valid(
+def test_useful_unary_operator(
     assert_errors,
     parse_ast_tree,
     code,
@@ -96,7 +100,7 @@ def test_plus_sign_before_numbers_valid(
     default_options,
     mode,
 ):
-    """Testing that there is no useless plus sign before a number."""
+    """Testing that there is no useless unary operator before a number."""
     tree = parse_ast_tree(mode(code.format(number)))
 
     visitor = UselessOperatorsVisitor(default_options, tree=tree)
