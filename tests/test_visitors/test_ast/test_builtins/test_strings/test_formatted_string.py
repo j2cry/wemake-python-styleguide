@@ -70,7 +70,7 @@ f_double_call_arg = "f'{foo()(arg)}'"
 f_single_chained_functions = "f'{f1().f2()}'"
 f_function_with_four_args = "f'{func(arg1, arg2, arg3, arg4)}'"
 f_method_with_four_args = "f'{obj.meth(arg1, arg2, arg3, arg4)}-post'"
-f_nested_string = "f'{f\"{value}\"}'"
+f_nested_string = 'f\'{f"{value}"}\''
 # Disallowed format specifiers
 f_format_var_multi = "f'pre {value:{fmt1}{fmt2}}'"
 f_format_var_chain = "f'{value:{fmt.attr.attr}}'"
