@@ -1,4 +1,5 @@
 import ast
+import re
 import string
 from collections.abc import Sequence
 from typing import ClassVar, Final, TypeAlias, final
@@ -8,7 +9,7 @@ from wemake_python_styleguide.compat.aliases import (
     AssignNodesWithWalrus,
     FunctionNodes,
 )
-from wemake_python_styleguide.logic import nodes, source, walk
+from wemake_python_styleguide.logic import source, walk
 from wemake_python_styleguide.logic.complexity.annotations import (
     check_is_node_in_specific_annotation,
 )
@@ -81,7 +82,7 @@ class WrongStringVisitor(base.BaseNodeVisitor):
 
 
 @final
-class WrongFormatStringVisitor(base.BaseNodeVisitor):
+class WrongFormatStringVisitor(base.BaseNodeVisitor):  # noqa: WPS214
     """Restricts usage of ``f`` strings."""
 
     _valid_format_index: ClassVar[AnyNodes] = (
@@ -101,23 +102,61 @@ class WrongFormatStringVisitor(base.BaseNodeVisitor):
 
     def visit_JoinedStr(self, node: ast.JoinedStr) -> None:
         """Forbids use of ``f`` strings and too complex ``f`` strings."""
-        if not isinstance(nodes.get_parent(node), ast.FormattedValue):
-            # We need this condition to make sure that this
-            # is not a part of complex string format like `f"Count={count:,}"`:
-            self._check_complex_formatted_string(node)
+        self._check_complex_formatted_string(node)
         self.generic_visit(node)
 
     def _check_complex_formatted_string(self, node: ast.JoinedStr) -> None:
         """Allows all simple uses of `f` strings."""
+        parent = walk.get_closest_parent(node, ast.JoinedStr)
         for string_component in node.values:
+            # check component complexity
+            is_component_complex = False
             if isinstance(string_component, ast.FormattedValue):
-                # Test if possible chaining is invalid
-                if self._is_valid_formatted_value(string_component.value):
-                    continue
-                self.add_violation(  # Everything else is too complex:
-                    complexity.TooComplexFormattedStringViolation(node),
+                is_component_complex = not self._is_valid_formatted_value(
+                    string_component.value
+                )
+            # check format complexity for nested JoinedStr
+            is_format_complex = parent and (
+                self._has_conversion(string_component)
+                or len(node.values) > 1
+                or not self._is_const_format_valid(string_component, parent)
+            )
+
+            if is_component_complex or is_format_complex:
+                self.add_violation(
+                    complexity.TooComplexFormattedStringViolation(
+                        parent or node
+                    ),
                 )
                 return
+
+    def _is_const_format_valid(
+        self,
+        string_component: ast.AST,
+        parent: ast.AST | None,
+    ) -> bool:
+        if (
+            parent
+            and isinstance(string_component, ast.Constant)
+            and isinstance(string_component.value, str)
+        ):
+            # check if a string component contains a valid format pattern
+            matched = re.match(
+                r'^((?:\.\d+(?:f|e))|#?[x|X]|[c,])$',
+                string_component.value,
+            )
+            return bool(matched)
+        return True
+
+    def _has_conversion(self, string_component: ast.AST) -> bool:
+        formatted_component = (
+            walk.get_closest_parent(string_component, ast.FormattedValue)
+            or string_component
+        )
+        return (
+            isinstance(formatted_component, ast.FormattedValue)
+            and formatted_component.conversion != -1
+        )
 
     def _is_valid_formatted_value(self, format_value: ast.AST) -> bool:
         if isinstance(

@@ -23,6 +23,7 @@ Semantic versioning in our case means:
 - Allows walrus operator in `WPS332`, #3505
 - Forbids symmetric bitwise operations in `WPS345`, #3593
 - Adds `WPS366`: forbid meaningless boolean operations, #3593
+- Forbids complex f-string format specifiers in `WPS237`, #3491
 
 ### Bugfixes
 
