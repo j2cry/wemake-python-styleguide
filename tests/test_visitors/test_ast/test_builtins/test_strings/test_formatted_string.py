@@ -35,6 +35,7 @@ f_function_with_single_arg = "f'smth {func(arg)}'"
 f_function_with_three_args = "f'{func(arg1, arg2, arg3)}'"
 f_method_with_three_args = "f'{obj.method(arg1, arg2, arg3)}'"
 # Allowed format specifiers
+f_format_aligned = "f'{value:<5}'"
 f_format_str = "f'{value!s}'"
 f_format_repr = "f'{value!r}'"
 f_format_code = "f'{value!a}'"
@@ -207,6 +208,7 @@ def test_complex_f_string(assert_errors, parse_ast_tree, code, default_options):
         f_function_with_three_args,
         f_method_with_three_args,
         # format specifiers
+        f_format_aligned,
         f_format_str,
         f_format_repr,
         f_format_code,
