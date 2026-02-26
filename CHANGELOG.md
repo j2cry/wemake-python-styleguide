@@ -16,6 +16,7 @@ Semantic versioning in our case means:
   But, in the future we might change the configuration names/logic,
   change the client facing API, change code conventions significantly, etc.
 
+
 ## WIP
 
 ### Features
@@ -29,6 +30,7 @@ Semantic versioning in our case means:
 - Fixes false positive `WPS457` for ``while True`` loop with ``await`` expressions, #3753
 - Fixes the false positive `WPS617` by assigning a function that receives a lambda expression as a parameter.
 - Fixes false positive `WPS430` for whitelisted nested functions, #3589
+- Fixes false positive `WPS457` for `while True` nested in `try/except`, #3604
 
 ### Removals
 
