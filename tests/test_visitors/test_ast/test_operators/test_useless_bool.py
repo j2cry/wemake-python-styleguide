@@ -18,10 +18,9 @@ from wemake_python_styleguide.visitors.ast.operators import (
         # `and` containing at least one constant
         'value and True',
         'value1 and 4 and value2 and "py" and True',
-        # `or` containing True/False
-        'value or False',
+        # `or` containing everythhing after constant
+        'value or False or True',
         'value1 or True or value2 or False or False',
-        # `or` containing everything after non-bool constant
         'value1 or 0 or value2',
         'value or "py" or 4',
         # `and`/`or` operators containing a duplicate name
@@ -54,6 +53,9 @@ def test_useless_bool(
 @pytest.mark.parametrize(
     'expression',
     [
+        'value or True',
+        'value or False',
+        'value or 0',
         'value or -value or ~value',
         'value1 or value2 or value3',
         'value1 or value2 or 4',

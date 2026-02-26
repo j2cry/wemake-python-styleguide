@@ -133,11 +133,9 @@ class UselessOperatorsVisitor(base.BaseNodeVisitor):  # noqa: WPS214
             unwrapped = unwrap_unary_node(node)
 
             # `and` containing at least one constant
-            # `or` containing bool or everything after non-bool constant
+            # `or` containing everythhing after constant
             has_useless_constant = isinstance(unwrapped, ast.Constant) and (
-                isinstance(op, ast.And)
-                or isinstance(unwrapped.value, bool)
-                or position < len(nodes)
+                isinstance(op, ast.And) or position < len(nodes)
             )
             if has_useless_constant:
                 self.add_violation(
