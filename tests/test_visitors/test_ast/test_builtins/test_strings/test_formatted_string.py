@@ -34,6 +34,10 @@ f_empty_string = "f''"
 f_function_with_single_arg = "f'smth {func(arg)}'"
 f_function_with_three_args = "f'{func(arg1, arg2, arg3)}'"
 f_method_with_three_args = "f'{obj.method(arg1, arg2, arg3)}'"
+f_assign = "f'{value=}'"
+f_assign_attr = "f'{value.attr=}'"
+f_assign_call = "f'{value()=}'"
+
 # Allowed format specifiers
 f_format_aligned = "f'{value:<5}'"
 f_format_str = "f'{value!s}'"
@@ -51,6 +55,11 @@ f_format_var_single2 = "f'{value1:{fmt1}} {value2:{fmt2}}'"
 f_format_var_single_index = "f'{value:{fmt[0]}}'"
 f_format_var_single_call = "f'{value:{fmt()}}'"
 f_format_convertions = "f'{value1!r} {value2!s} {value3!a}'"
+f_format_assign = "f'{value=:<8}'"
+f_format_assign_conversion = "f'{value=!r}'"
+f_format_assign_attr = "f'{value.attr=:.456e}'"
+f_format_assign_var_single = "f'{value=:{fmt}}'"
+f_format_assign_var_single2 = "f'{value1=:{fmt1}} {value2=:{fmt2}}'"
 
 # Disallowed
 f_string = "f'x + y = {2 + 2}'"
@@ -97,6 +106,10 @@ f_format_round_const = "f'{value:10.4f}'"
 f_format_scientific_const = "f'{value:10.7e}'"
 f_format_useless1 = "f'{value:_}'"
 f_format_useless2 = "f'{value:_<}'"
+f_format_assign_const = "f'{value=:_^8.2f}'"
+f_format_assign_conversion_const = "f'{value=!r:_>11}'"
+f_format_assign_var_chain = "f'{value=:{fmt.attr.attr}}'"
+f_format_assign_var_multi = "f'{value=:{fmt1}{fmt2}}'"
 
 # regression 1921
 f_string_comma_format = 'f"Count={count:,}"'
@@ -174,6 +187,10 @@ def test_string_normal(
         f_format_scientific_const,
         f_format_useless1,
         f_format_useless2,
+        f_format_assign_const,
+        f_format_assign_conversion_const,
+        f_format_assign_var_chain,
+        f_format_assign_var_multi,
     ],
 )
 def test_complex_f_string(assert_errors, parse_ast_tree, code, default_options):
@@ -207,6 +224,9 @@ def test_complex_f_string(assert_errors, parse_ast_tree, code, default_options):
         f_function_with_single_arg,
         f_function_with_three_args,
         f_method_with_three_args,
+        f_assign,
+        f_assign_attr,
+        f_assign_call,
         # format specifiers
         f_format_aligned,
         f_format_str,
@@ -224,6 +244,11 @@ def test_complex_f_string(assert_errors, parse_ast_tree, code, default_options):
         f_format_var_single_index,
         f_format_var_single_call,
         f_format_convertions,
+        f_format_assign,
+        f_format_assign_conversion,
+        f_format_assign_attr,
+        f_format_assign_var_single,
+        f_format_assign_var_single2,
     ],
 )
 def test_simple_f_string(assert_errors, parse_ast_tree, code, default_options):

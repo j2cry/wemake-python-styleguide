@@ -16,6 +16,7 @@ from wemake_python_styleguide.logic.complexity.annotations import (
 from wemake_python_styleguide.logic.tree import (
     attributes,
     operators,
+    strings,
     variables,
 )
 from wemake_python_styleguide.types import (
@@ -82,7 +83,7 @@ class WrongStringVisitor(base.BaseNodeVisitor):
 
 
 @final
-class WrongFormatStringVisitor(base.BaseNodeVisitor):  # noqa: WPS214
+class WrongFormatStringVisitor(base.BaseNodeVisitor):
     """Restricts usage of ``f`` strings."""
 
     _valid_format_index: ClassVar[AnyNodes] = (
@@ -117,7 +118,7 @@ class WrongFormatStringVisitor(base.BaseNodeVisitor):  # noqa: WPS214
                 )
             # check format complexity for nested JoinedStr
             is_format_complex = parent and (
-                self._has_conversion(string_component)
+                strings.has_fstring_conversion(string_component)
                 or len(node.values) > 1
                 or not self._is_const_format_valid(string_component, parent)
             )
@@ -147,16 +148,6 @@ class WrongFormatStringVisitor(base.BaseNodeVisitor):  # noqa: WPS214
             )
             return bool(matched)
         return True
-
-    def _has_conversion(self, string_component: ast.AST) -> bool:
-        formatted_component = (
-            walk.get_closest_parent(string_component, ast.FormattedValue)
-            or string_component
-        )
-        return (
-            isinstance(formatted_component, ast.FormattedValue)
-            and formatted_component.conversion != -1
-        )
 
     def _is_valid_formatted_value(self, format_value: ast.AST) -> bool:
         if isinstance(
