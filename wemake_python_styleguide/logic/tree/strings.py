@@ -21,8 +21,7 @@ def is_doc_string(node: ast.AST) -> bool:
 def has_fstring_conversion(component: ast.AST) -> bool:
     """Checks whether f-string with the component has a conversion specifier."""
     formatted_component = (
-        get_closest_parent(component, ast.FormattedValue)
-        or component
+        get_closest_parent(component, ast.FormattedValue) or component
     )
     return (
         isinstance(formatted_component, ast.FormattedValue)
