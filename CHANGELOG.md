@@ -22,6 +22,7 @@ Semantic versioning in our case means:
 ### Bugfixes
 
 - Fixes false positive `WPS366` allowing the use of a single constant in `or`, #3610
+- Fixes the false positive `WPS330` when alternating unary operators, #3594
 
 ## 1.6.0
 

@@ -7,7 +7,7 @@ from wemake_python_styleguide.compat.aliases import TextNodes
 from wemake_python_styleguide.logic import walk
 from wemake_python_styleguide.logic.nodes import get_parent
 from wemake_python_styleguide.logic.tree.operators import (
-    count_unary_operator,
+    count_consecutive_unary_operator,
     get_reduced_unary_operators,
     unwrap_unary_node,
 )
@@ -105,7 +105,7 @@ class UselessOperatorsVisitor(base.BaseNodeVisitor):  # noqa: WPS214
 
     def _check_operator_count(self, node: ast.Constant) -> None:
         for node_type, limit in self._unary_limits.items():
-            if count_unary_operator(node, node_type) > limit:
+            if count_consecutive_unary_operator(node, node_type) > limit:
                 self.add_violation(
                     consistency.UselessOperatorsViolation(
                         node,
